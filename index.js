@@ -20,12 +20,13 @@ class Server {
         files.forEach((file) => {
           const route = `/${file.replace(".json", "")}`;
           const routeByID = `${route}/:id`;
+          const routeDelete = `${route}/delete/:id`;
 
           this.api.get(route, getAll);
           this.api.get(routeByID, getByID);
           this.api.post(route, create);
           this.api.put(routeByID, update);
-          this.app.delete(routeByID, del);
+          this.app.post(routeDelete, del);
         });
       }
     });
@@ -43,9 +44,13 @@ class Server {
   };
 
   init() {
+    const corsOptions = {
+      origin: '*',
+      methods: '*'
+    }
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cors());
+    this.app.use(cors(corsOptions));
     this.app.use('/', this.api);
     this.logger()
 
